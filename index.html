@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>皮哥AI提示詞交流分享</title>
+    <style>
+        /* 網頁美化設計 */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
+        header { text-align: center; margin-bottom: 30px; }
+        h1 { color: #2c3e50; }
+        .controls { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+        input[type="text"] { padding: 12px; width: 300px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; outline: none;}
+        input[type="text"]:focus { border-color: #3498db; }
+        select { padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; outline: none; background: white;}
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: transform 0.2s; display: flex; flex-direction: column;}
+        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1);}
+        .tag { display: inline-block; background: #e0f2f1; color: #00796b; padding: 5px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; margin-bottom: 15px; align-self: flex-start;}
+        .title { font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #2c3e50;}
+        .content { font-size: 15px; color: #555; background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #3498db; margin-bottom: 20px; white-space: pre-wrap; flex-grow: 1; line-height: 1.5;}
+        .copy-btn { background: #3498db; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: bold; width: 100%; transition: background 0.2s;}
+        .copy-btn:hover { background: #2980b9; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🚀 皮哥AI提示詞交流分享</h1>
+    <p>分類管理、一鍵複製，輕鬆尋找最實用的 AI 提示詞</p>
+</header>
+
+<div class="controls">
+    <input type="text" id="searchInput" placeholder="🔍 搜尋提示詞關鍵字...">
+    <select id="categorySelect">
+        <option value="all">📁 所有分類</option>
+        <option value="工作效率">工作效率</option>
+        <option value="創意寫作">創意寫作</option>
+        <option value="程式開發">程式開發</option>
+        <option value="影像生成">影像生成</option>
+    </select>
+</div>
+
+<div class="grid" id="promptGrid">
+    </div>
+
+<script>
+    /* * 【皮哥專屬修改區】
+     * 你可以在這裡新增、修改你的提示詞！
+     * 格式： { title: "標題", category: "分類(要跟上面一樣)", content: "提示詞內容" }
+     * 注意每一筆資料最後都要有逗號 `,` (最後一筆除外)
+     */
+    const prompts = [
+        {
+            title: "撰寫高點擊率標題",
+            category: "創意寫作",
+            content: "請幫我為一篇關於「[填寫主題]」的部落格文章，想出 10 個吸引人、具有懸念且適合放在社群媒體上的標題。請分析目標受眾的心態來設計。"
+        },
+        {
+            title: "程式碼錯誤排除 (Debug)",
+            category: "程式開發",
+            content: "我有一段 [填寫程式語言] 的程式碼，它出現了 [填寫錯誤訊息] 的錯誤。請幫我找出錯誤的原因，並提供修正後的程式碼及白話文解釋。\n\n程式碼如下：\n[貼上程式碼]"
+        },
+        {
+            title: "會議記錄精要摘要",
+            category: "工作效率",
+            content: "這是一段會議記錄的逐字稿。請幫我整理出一份結構化的摘要，必須包含：\n1. 會議核心重點\n2. 達成的共識\n3. 後續待辦事項 (Action Items) 以及負責人。\n\n逐字稿：\n[貼上逐字稿]"
+        },
+        {
+            title: "Midjourney 寫實人像",
+            category: "影像生成",
+            content: "A cinematic portrait of a young Asian woman cyberpunk hacker, neon lights reflecting in her eyes, highly detailed, 8k resolution, shot on 35mm lens, photorealistic --ar 16:9"
+        },
+        {
+            title: "中翻英商務信件潤飾",
+            category: "工作效率",
+            content: "請將以下中文草稿翻譯成英文，並潤飾成適合商務場合、語氣專業且禮貌的信件，請提供兩個版本（一個較正式，一個較親切）供我選擇：\n\n[貼上中文草稿]"
+        }
+    ];
+
+    const grid = document.getElementById('promptGrid');
+    const searchInput = document.getElementById('searchInput');
+    const categorySelect = document.getElementById('categorySelect');
+
+    function renderPrompts(filterText = "", filterCategory = "all") {
+        grid.innerHTML = ""; 
+        
+        const filtered = prompts.filter(p => {
+            const matchText = p.title.includes(filterText) || p.content.includes(filterText);
+            const matchCategory = filterCategory === "all" || p.category === filterCategory;
+            return matchText && matchCategory;
+        });
+
+        if(filtered.length === 0) {
+            grid.innerHTML = "<p style='text-align:center; grid-column: 1 / -1; color: #888;'>找不到符合的提示詞 🥲</p>";
+            return;
+        }
+
+        filtered.forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="tag">${p.category}</div>
+                <div class="title">${p.title}</div>
+                <div class="content">${p.content}</div>
+                <button class="copy-btn" onclick="copyText(this, \`${p.content.replace(/`/g, '\\`')}\`)">📋 複製提示詞</button>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    function copyText(button, text) {
+        navigator.clipboard.writeText(text).then(() => {
+            const originalText = button.innerText;
+            button.innerText = "✅ 已成功複製！";
+            button.style.background = "#27ae60";
+            setTimeout(() => {
+                button.innerText = originalText;
+                button.style.background = "#3498db";
+            }, 2000);
+        });
+    }
+
+    searchInput.addEventListener('input', (e) => renderPrompts(e.target.value, categorySelect.value));
+    categorySelect.addEventListener('change', (e) => renderPrompts(searchInput.value, e.target.value));
+
+    renderPrompts();
+</script>
+
+</body>
+</html>
