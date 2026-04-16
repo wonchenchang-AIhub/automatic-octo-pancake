@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Search,
   Copy,
@@ -20,35 +20,52 @@ const FILES = [
       {
         category: "AI工具組合應用",
         name: "產業資訊全貌分析",
-        description: "Gems 客製化大腦 + NotebookLM deep research 資料庫連動",
+        description: "Gems 客製化大腦 + NotebookLM deep research資料庫連動",
         prompt: `【角色定位】
-你是一位專精於資訊結構化（Information Structuring）的專家，擁有能在瞬間處理海量資訊並萃取其本質的能力。
+你是一位專精於資訊結構化（Information Structuring）的專家，擁有能在瞬間處理海量資訊並萃取其本質的能力。你的核心原則是將讀者最優先應理解的資訊放在首位，協助讀者在極短時間內掌握全局。
 【核心任務】
-請分析用戶提供的原始素材，在進行內容結構化後，產出一個能讓人一發掌握重點的專業輸出。
+請分析用戶提供的原始素材（如：會議記錄、文章、文件、筆記等），在進行內容結構化後，產出一個能讓人一發掌握重點的專業輸出。
+【背景資訊】
+來源特徵：原始素材可能未經整理且內容冗長。
+目標讀者：讀者時間有限，需要快速理解整體全貌。
+資訊優先級：比起低重要度的細節，更應優先呈現與決策或核心理解直接相關的內容。
+真實性原則：不進行任何推測或自行補完資訊，嚴格僅使用素材中記載的事實。
+【限制條件】
+精煉化：刪除冗餘資訊，僅保留核心重點。
+層次感：必須體現從宏觀到微觀的邏輯順序。
+字數控制：結論與要點需符合具體的行數限制。
 【輸出格式】
-1. 結論摘要
-2. 要點一覽
-3. 結構化地圖
-4. 補充說明（必要時）`,
+【結論摘要】用 5 行以內文字總結最關鍵重點。
+【要點一覽】依重要程度條列（最多 5 點），每點 1 句。
+【結構化地圖】依照主題 → 要點 → 補充的階層整理。
+【補充說明】僅在必要時提供。`,
       },
       {
         category: "AI工具組合應用",
         name: "Gemini deep research 篩選資料",
-        description: "真實案例、來源溯源、AI 變現模式評估模板",
+        description: "真實案例、來源溯源、AI變現模式評估模板",
         prompt: `# Role: 嚴謹的數位商業分析師與事實查核員
+## Background
+我正在尋找真實可靠的線上變現機會。
+我需要一份基於真實數據與可驗證來源的市場分析報告。
+請摒棄模糊理論，重點放在已被驗證的成功路徑上。
 ## Core Task
 分析 10 種主流線上變現模式，並提供 3-5 個普通人使用 AI 工具變現的真實案例。
 ## Critical Constraints
-1. 拒絕編造
-2. 強制溯源
-3. 文末建立資料來源文獻庫
-4. Markdown、繁體中文`,
+1. 拒絕編造：所有案例必須真實存在。
+2. 強制溯源：每個案例必須附原始網址。
+3. 網址打包：文末建立資料來源文獻庫。
+4. 格式要求：Markdown、繁體中文。
+## Workflows
+第一部分：10 大主流變現模式評估矩陣。
+第二部分：3-5 個普通人 AI 變現真實案例。
+第三部分：資料來源網址匯總庫。`,
       },
       {
         category: "AI工具組合應用",
         name: "三合一AI神組合",
-        description: "整合型工作流入口節點",
-        prompt: `可作為 NotebookLM、Gemini 與其他 AI 工具的整合工作流入口。`,
+        description: "保留原檔案中的獨立細分類名稱，便於後續擴充內容",
+        prompt: `此細分類名稱在檔案中獨立出現，可作為後續補充 NotebookLM、Gemini 與其他工具整合工作流的入口節點。`,
       },
     ],
   },
@@ -61,8 +78,7 @@ const FILES = [
         category: "研究分析",
         name: "頂級分析師分析套路模組",
         description: "13 種分析套路 + 深度洞察 + 金句",
-        prompt: `請針對指定產業資料進行分析，不只摘要，而是找出最值得注意的洞察。
-分析時依序思考：第一性原理、訊號偵測、結構變化、權力轉移、瓶頸、早期訊號、集中化、成長假象、技術與市場錯位、生態系競爭、S 曲線、MECE、文化差異。`,
+        prompt: `【角色】你是一位具有國際一流顧問公司等級分析能力的資深產業分析師。請針對指定產業資料進行分析，不只摘要，而是找出最值得注意的洞察。分析時請依序思考：第一性原理、訊號偵測、結構變化、產業權力轉移、Hidden Bottleneck、Early Signal、集中化、成長假象、技術與市場錯位、生態系競爭、S 曲線轉折、MECE、東西方文化差異。請整理 3-5 項高認知門檻洞察，每個包含核心洞察、關鍵數據或引用、深層解讀、產業含義、延伸觀察，並提出 2-3 句洞察金句。`,
       },
       {
         category: "研究分析",
@@ -74,7 +90,7 @@ const FILES = [
         category: "研究分析",
         name: "主題綜合分析",
         description: "通盤掃描議題，提供系統性發現",
-        prompt: `建立多維度分析框架，包含 PESTEL、五力分析與價值鏈，並對比東西方商業思維差異。`,
+        prompt: `口語化版與結構化版雙格式。建立多維度分析框架，包含 PESTEL、五力分析與價值鏈，並對比東西方商業思維差異。`,
       },
       {
         category: "研究分析",
@@ -86,7 +102,55 @@ const FILES = [
         category: "研究分析",
         name: "尋找矛盾",
         description: "辨識資訊衝突與根源",
-        prompt: `從目標主題中識別核心矛盾，列出雙方說法、衝突原因與證據路徑。`,
+        prompt: `從目標主題中識別 3 個核心矛盾，列出雙方說法、衝突原因與證據路徑。`,
+      },
+      {
+        category: "研究分析",
+        name: "間隙分析 Gap Analysis",
+        description: "定位實作與標準理論的落差",
+        prompt: `對比實作步驟與材料要求，指出遺漏概念、跳過的先決條件與補救行動。`,
+      },
+      {
+        category: "研究分析",
+        name: "尋找資料中驚訝或有趣發現",
+        description: "異常值分析與反直覺洞察",
+        prompt: `辨識資料中的異常數據點，進行第一原理推演，提出 3 個耳目一新的洞察與反直覺結論。`,
+      },
+      {
+        category: "研究分析",
+        name: "深度報導、研究報告與事實查核",
+        description: "先做自我查證規劃，再撰寫全文",
+        prompt: `先列預計引用的事實與數據、驗證方式、待釐清問題，以及建議使用的分析方法與模型。`,
+      },
+      {
+        category: "研究分析",
+        name: "McKinsey 顧問型一頁式總結",
+        description: "高密度單頁顧問簡報模板",
+        prompt: `以金字塔原理輸出 HTML 單頁，包含表格、圖表、策略框架、評估卡與 Executive Summary。`,
+      },
+      {
+        category: "研究分析",
+        name: "掌握核心主題和意義",
+        description: "用 5 個核心問題抓主旨",
+        prompt: `聚焦核心主題與定義、關鍵概念、概念關係與實際應用。`,
+      },
+      {
+        category: "研究分析",
+        name: "研究助手",
+        description: "學術引用與事實/推論分離",
+        prompt: `回答時附精確原文引用，指出矛盾點，並明確區分事實與推論。`,
+      },
+      {
+        category: "研究分析",
+        name: "科學研究員",
+        description: "嚴格客觀的科學研究助手",
+        prompt: `聚焦方法、資料完整性與矛盾證據，優先考量樣本量、實驗設計與統計顯著性。`,
+      },
+      {
+        category: "研究分析",
+        name: "Gemini deep research 篩選資料",
+        description: "AI 變現案例溯源模板",
+        prompt: `針對 10 種主流線上變現模式與 3-5 個普通人真實案例，輸出表格、案例與來源庫。`,
       },
       {
         category: "分析企劃",
@@ -95,10 +159,70 @@ const FILES = [
         prompt: `先做理解摘要、待釐清問題、行動指南，再暫停等待確認。`,
       },
       {
+        category: "分析企劃",
+        name: "內容分析師",
+        description: "抓問題、缺口與可行動建議",
+        prompt: `分析資料時聚焦讀者會問什麼、內容缺口與可行動建議，並用表格整理。`,
+      },
+      {
+        category: "分析企劃",
+        name: "文案標題設計",
+        description: "社群導向標題發想",
+        prompt: `為一篇關於某主題的部落格文章，設計 10 個吸引人且具懸念的標題。`,
+      },
+      {
+        category: "分析企劃",
+        name: "5個核心問題",
+        description: "以問題捕捉內容本質",
+        prompt: `分析所有輸入內容，生成 5 個核心問題。`,
+      },
+      {
+        category: "分析企劃",
+        name: "擴展思考層面",
+        description: "挖掘令人驚訝的事實或想法",
+        prompt: `聚焦主題與具體面向，找出最令人驚訝的觀點與關鍵引用。`,
+      },
+      {
+        category: "分析企劃",
+        name: "方案審查",
+        description: "決策備忘錄格式的審查",
+        prompt: `用戶證據、可行性檢查與盲點三段式輸出。`,
+      },
+      {
+        category: "分析企劃",
+        name: "呼喚假伯斯",
+        description: "極簡、毒舌、產品本質導向",
+        prompt: `以 Steve Jobs 式風格，用簡短有力的語句解決職場問題。`,
+      },
+      {
+        category: "分析企劃",
+        name: "實施概念",
+        description: "從概念到行動",
+        prompt: `對每個相關資源引用關鍵證據、關聯其他資訊、指出衝突觀點並提供明確行動。`,
+      },
+      {
+        category: "分析企劃",
+        name: "綜合概念",
+        description: "連接兩個抽象主題",
+        prompt: `綜合主題 1 與主題 2 之間的連接，聚焦關聯、衝突與有趣組合。`,
+      },
+      {
+        category: "分析企劃",
+        name: "英中轉譯求解",
+        description: "先翻英文再問，再翻回中文",
+        prompt: `將中文問題翻譯成英文，使用英文提問，再把回答翻回原始語言。`,
+      },
+      {
         category: "推理優化",
         name: "預設提示詞",
         description: "口語化提示詞結構優化 + 內部評分 + 事實查核",
         prompt: `先做專家優化，再做內部評分，最後執行內部事實查核。`,
+      },
+      {
+        category: "推理優化",
+        name: "自我反思與再優化",
+        description: "錯誤根因與未來模板",
+        prompt: `總結錯誤根因、定位步驟、修復方法，並產出未來用提示模板。`,
       },
       {
         category: "學習與寫作",
@@ -108,9 +232,51 @@ const FILES = [
       },
       {
         category: "學習與寫作",
+        name: "學習教練B",
+        description: "專家視角 + 常見誤解",
+        prompt: `用簡單語言解釋核心概念、分析常見誤解、提供實用建議與下一步。`,
+      },
+      {
+        category: "學習與寫作",
+        name: "學習教練C",
+        description: "蘇格拉底式提問",
+        prompt: `用蘇格拉底式提問引導思考，不直接給答案。`,
+      },
+      {
+        category: "學習與寫作",
+        name: "學習教練D",
+        description: "高中教師角色",
+        prompt: `將原始文檔翻譯成國中生能理解的語言，含 tl;dr、類比與詞彙表。`,
+      },
+      {
+        category: "學習與寫作",
         name: "寫作教練",
         description: "修改、說明、提升建議",
         prompt: `指出冗長或不清楚之處，提供修改後版本與具體建議。`,
+      },
+      {
+        category: "學習與寫作",
+        name: "其他",
+        description: "通用啟發型提問集合",
+        prompt: `讓我們換個角度思考一下、我忽略了什麼嗎、幫我分解一下。`,
+      },
+      {
+        category: "學習與寫作",
+        name: "萬用校稿",
+        description: "專業繁中總編輯兩段式輸出模板",
+        prompt: `先做修正分析，再提供完整校正後文本，並保留原作者風格。`,
+      },
+      {
+        category: "簡報與報告製作",
+        name: "圖表設計",
+        description: "判斷資訊圖表類型",
+        prompt: `看文章內容後，建議最適合的資訊圖表類型，並將風格描述與文章結構分開。`,
+      },
+      {
+        category: "簡報與報告製作",
+        name: "簡報設計提示詞優化",
+        description: "把文章轉成適合 PPT 的生成指令",
+        prompt: `確保圖表、表格與文字內容緊密結合，並在合適位置插入高品質產業關聯意象圖。`,
       },
       {
         category: "簡報與報告製作",
@@ -119,10 +285,64 @@ const FILES = [
         prompt: `分析受眾、提供大綱、每頁核心訊息與視覺建議。`,
       },
       {
+        category: "簡報與報告製作",
+        name: "簡報設計專家B",
+        description: "完整投影片 story line 工作流",
+        prompt: `從頁數評估、章節拆解、口語講稿到設計風格，輸出整份大綱。`,
+      },
+      {
+        category: "簡報與報告製作",
+        name: "簡報故事架構專家",
+        description: "問題—解析—解方敘事法",
+        prompt: `重構簡報為引人入勝的故事，包含衝突、轉折、高潮與解決方案。`,
+      },
+      {
+        category: "簡報與報告製作",
+        name: "視覺化簡報專家",
+        description: "圖表與視覺隱喻建議",
+        prompt: `將關鍵數據轉為合適圖表，並提供多種視覺隱喻與關係視覺化方式。`,
+      },
+      {
+        category: "簡報與報告製作",
+        name: "風格樣式",
+        description: "多種簡報風格樣式與提示詞集合",
+        prompt: `含極簡、商務、日式極簡、Apple、TED、學術、顧問式、科技未來風等。`,
+      },
+      {
+        category: "簡報與報告製作",
+        name: "簡報製作",
+        description: "依檔案內容規劃最佳頁數簡報",
+        prompt: `每頁包含標題、核心重點、視覺提示與頁面目的，並規劃章節與前後邏輯。`,
+      },
+      {
+        category: "簡報與報告製作",
+        name: "麥肯錫風格簡報",
+        description: "單頁高密度 HTML 顧問簡報",
+        prompt: `以 McKinsey 風格輸出單頁高密度簡報，包含表格、圖表、策略框架與風險建議。`,
+      },
+      {
         category: "問題分析與解決",
         name: "問題與因果分析A",
         description: "3L5W + 8D + KPI/OKR + 利害關係人分析",
         prompt: `用 why-why 分析根因，提出解決方案，並制定 8D、KPI/OKR 與風險預防。`,
+      },
+      {
+        category: "問題分析與解決",
+        name: "問題與因果分析B",
+        description: "完整根因分析與改善設計",
+        prompt: `依序輸出問題定義、根因分析、流出原因、系統性根因、方案比較表、8D、KPI/OKR、風險預防。`,
+      },
+      {
+        category: "問題分析與解決",
+        name: "問題與因果分析C",
+        description: "改善顧問版本",
+        prompt: `結合 3L5W、8D、風險管理與利害關係人分析，提出可執行改善方案。`,
+      },
+      {
+        category: "問題分析與解決",
+        name: "問題解決顧問",
+        description: "表格化輸出問題拆解",
+        prompt: `針對議題提供問題拆解、可能成因、選項比較、建議行動與實施風險。`,
       },
       {
         category: "決策分析",
@@ -131,10 +351,28 @@ const FILES = [
         prompt: `建立決策矩陣，並補充風險與機會成本。`,
       },
       {
+        category: "決策分析",
+        name: "決策顧問",
+        description: "選項A vs 選項B",
+        prompt: `比較兩選項的關鍵評估維度、優缺點、風險與長短期影響。`,
+      },
+      {
         category: "溝通談判",
         name: "溝通談判大師",
         description: "BATNA + LAER + HEARD",
         prompt: `依客訴、溝通僵局或價格談判情境，輸出直接可發送的回覆與不同語氣版本。`,
+      },
+      {
+        category: "工程研究",
+        name: "請分析這段文字／文章",
+        description: "論點、邏輯結構、證據強度分析",
+        prompt: `拆解主要論點、潛在假設與證據強度，並提出改進論證的建議。`,
+      },
+      {
+        category: "每日新知摘要排程",
+        name: "善用 Gemini 或 ChatGPT 排程功能",
+        description: "自動整理產業新聞與新內容監測",
+        prompt: `每天早上 7 點搜尋國內外新聞與官方網站，比對前一天是否有新內容並依格式整理。`,
       },
       {
         category: "適法性評估",
@@ -144,9 +382,21 @@ const FILES = [
       },
       {
         category: "職涯教練",
+        name: "Team Taiwan 無限應援啦啦隊",
+        description: "誇張熱血的鼓舞模式",
+        prompt: `用極度誇張、熱血、溫暖、好笑又真誠的方式加油打氣。`,
+      },
+      {
+        category: "職涯教練",
         name: "鐵血斯巴達教練",
         description: "紀律、戰術、行動導向",
         prompt: `每次回覆包含真正問題、該砍掉的藉口、今天就要做的 3 個行動與戰前口號。`,
+      },
+      {
+        category: "職涯教練",
+        name: "職場黑魔法陰陽師",
+        description: "老鳥視角的職場生存術",
+        prompt: `用機智、幽默又略帶毒舌的方式，教你看懂職場政治與潛規則。`,
       },
     ],
   },
@@ -159,13 +409,13 @@ const FILES = [
         category: "提示詞優化及回覆品質自我審查",
         name: "個人化預設提示詞(1/2)",
         description: "結構化提示詞 + 世界一流內部評分",
-        prompt: `先問 5W1H 釐清需求，再依 [角色任務]、[背景資訊]、[具體指令]、[約束條件] 四維度優化。之後建立內部評分標準，反覆修改到 10/10 再輸出。`,
+        prompt: `將口語化提示詞轉為結構化提示詞。先問 5W1H 釐清需求，再依 [角色任務]、[背景資訊]、[具體指令]、[約束條件] 四維度優化。之後建立內部評分標準，反覆修改到 10/10 再輸出。`,
       },
       {
         category: "提示詞優化及回覆品質自我審查",
         name: "個人化預設提示詞(2/2)",
         description: "證據優先 + 來源標註 + 數據比對",
-        prompt: `回答前先執行內部事實查核；如涉及數據、案例或法規，附來源或推論邏輯；文末建立資料來源文獻庫。`,
+        prompt: `回答前先執行內部事實查核：僅依據確切已知事實回答；若資料不足則明確留白；如涉及數據、案例或法規，附來源或推論邏輯；文末建立資料來源文獻庫；使用繁體中文 Markdown。`,
       },
     ],
   },
@@ -194,9 +444,39 @@ const FILES = [
       },
       {
         category: "圖片設計",
+        name: "情緒療癒主題圖",
+        description: "心靈共鳴卡、引導句貼文",
+        prompt: `柔焦清晨光線照亮一朵花，背景模糊，風格詩意、溫柔、有呼吸感。`,
+      },
+      {
+        category: "圖片設計",
+        name: "AI 工具應用示範圖",
+        description: "教學系列／工具分享文",
+        prompt: `電腦螢幕顯示 AI 圖像生成介面，一隻手正在操作鍵盤，科技感且乾淨。`,
+      },
+      {
+        category: "圖片設計",
+        name: "書寫與思考場景",
+        description: "寫作靈感、創作者內心獨白文",
+        prompt: `打開的筆記本上有未寫完的文字，一支筆靜靜放在旁邊，光線從右上角灑落。`,
+      },
+      {
+        category: "圖片設計",
+        name: "靜物＋文字背景（共鳴卡用）",
+        description: "引言圖、名言卡、海報背景",
+        prompt: `柔和漸層背景中有微光與光點，中央留白可放文字，風格溫柔療癒乾淨。`,
+      },
+      {
+        category: "圖片設計",
         name: "工作坊／講座主視覺",
         description: "課程、線上活動、品牌講座",
         prompt: `一組人圍坐討論於現代明亮空間，背景為品牌主色調，氛圍專業卻親切。`,
+      },
+      {
+        category: "圖片設計",
+        name: "夜晚思考情境",
+        description: "反思主題／人生轉折文",
+        prompt: `夜色中窗邊桌上有暖黃燈與筆記本，城市燈光模糊於遠方，風格安靜溫暖。`,
       },
       {
         category: "圖片設計",
@@ -221,13 +501,25 @@ const FILES = [
         category: "NotebookLM 資訊圖表提示詞",
         name: "資訊圖表提示詞",
         description: "字體風格、圖表類型、配色、排版與輸出要求",
-        prompt: `字體風格、圖表類型、配色方案與視覺風格依內容自動判斷。保留 25% 留白，資訊層級分明。`,
+        prompt: `【基本資訊】字體風格、圖表類型、配色方案與視覺風格依內容自動判斷。保留 25% 留白，資訊層級分明，文字清晰易讀，使用視覺引導線或色塊區分資訊模組。`,
+      },
+      {
+        category: "NotebookLM 資訊圖表提示詞",
+        name: "簡報提示詞",
+        description: "主題、內容大綱、目標對象與設計風格規範",
+        prompt: `主題、內容大綱、目標對象可替換。每頁一個核心概念，數據盡量視覺化呈現，留白充足且層次分明。`,
       },
       {
         category: "簡報與報告製作",
         name: "簡報設計規劃",
         description: "最佳頁數、頁面標題、核心重點與版面規範",
-        prompt: `根據檔案內容提煉成最佳頁數簡報。每頁包含標題、核心重點與關鍵要素。`,
+        prompt: `根據檔案內容提煉成最佳頁數簡報。每頁包含標題、核心重點與關鍵要素，並遵守字型、字級、行距、配色、圖示、插圖與整體一致性規範。`,
+      },
+      {
+        category: "簡報與報告製作",
+        name: "簡報設計提示詞優化",
+        description: "把文章轉成適合 PPT 生成的提示詞",
+        prompt: `輸出適合內容的風格、效果與文字組織方式，確保圖表、表格與文字緊密結合，並適當插入高品質意象圖。`,
       },
       {
         category: "簡報與報告製作",
@@ -256,8 +548,14 @@ const FILES = [
       {
         category: "各類風格樣式A",
         name: "風格樣式提示詞",
-        description: "極簡、扁平、商務、資訊圖表、海報、Hero Visual 等",
+        description: "極簡、扁平、商務、資訊圖表、校園、海報、Hero Visual 等",
         prompt: `集合多種風格樣式提示詞，供簡報生成時直接套用。`,
+      },
+      {
+        category: "各類風格樣式B",
+        name: "簡報視覺設計風格",
+        description: "極簡與現代、資訊整理、創意表現、敘事導向等分類",
+        prompt: `把簡報風格系統化分成極簡與現代設計取向、資訊整理與圖像導向、創意與表現型設計、敘事與情境導向。`,
       },
       {
         category: "簡報與報告製作",
@@ -284,7 +582,7 @@ function groupModules(file) {
 
 function highlight(text, query) {
   if (!query) return text;
-  const safe = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const safe = query.replace(/[.*+?^${}()|[\]\]/g, "\$&");
   const parts = String(text).split(new RegExp(`(${safe})`, "ig"));
   return parts.map((part, idx) =>
     part.toLowerCase() === query.toLowerCase() ? (
@@ -299,20 +597,13 @@ function highlight(text, query) {
 
 function CopyButton({ value }) {
   const [copied, setCopied] = useState(false);
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1200);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   return (
     <button
-      onClick={handleCopy}
+      onClick={async () => {
+        await navigator.clipboard.writeText(value);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1200);
+      }}
       className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
     >
       {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
@@ -321,68 +612,52 @@ function CopyButton({ value }) {
   );
 }
 
-export default function PromptBlogLibraryFixed() {
+export default function PromptBlogLibrary() {
   const [activeFileId, setActiveFileId] = useState(FILES[0].id);
   const [activeCategory, setActiveCategory] = useState("");
   const [activeModuleName, setActiveModuleName] = useState("");
   const [query, setQuery] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  const activeFile = useMemo(() => {
-    return FILES.find((file) => file.id === activeFileId) || FILES[0];
-  }, [activeFileId]);
+  const activeFile = useMemo(
+    () => FILES.find((f) => f.id === activeFileId) || FILES[0],
+    [activeFileId]
+  );
 
   const grouped = useMemo(() => groupModules(activeFile), [activeFile]);
+  const categories = useMemo(() => Object.keys(grouped), [grouped]);
 
   const filteredGrouped = useMemo(() => {
-    const keyword = query.trim().toLowerCase();
+    const q = query.trim().toLowerCase();
     const result = {};
-
     Object.entries(grouped).forEach(([category, modules]) => {
-      const filtered = modules.filter((module) => {
-        const haystack = `${module.category}\n${module.name}\n${module.description}\n${module.prompt}`.toLowerCase();
-        return !keyword || haystack.includes(keyword);
+      const filtered = modules.filter((m) => {
+        const haystack = `${m.category}
+${m.name}
+${m.description}
+${m.prompt}`.toLowerCase();
+        return !q || haystack.includes(q);
       });
-
-      if (filtered.length > 0) {
-        result[category] = filtered;
-      }
+      if (filtered.length) result[category] = filtered;
     });
-
     return result;
   }, [grouped, query]);
 
-  const visibleCategories = useMemo(() => Object.keys(filteredGrouped), [filteredGrouped]);
+  const visibleCategories = Object.keys(filteredGrouped);
 
-  useEffect(() => {
-    if (!visibleCategories.length) {
-      setActiveCategory("");
-      setActiveModuleName("");
-      return;
-    }
+  const selectedCategory = useMemo(() => {
+    if (activeCategory && filteredGrouped[activeCategory]) return activeCategory;
+    return visibleCategories[0] || "";
+  }, [activeCategory, filteredGrouped, visibleCategories]);
 
-    const safeCategory = visibleCategories.includes(activeCategory)
-      ? activeCategory
-      : visibleCategories[0];
-
-    const safeModules = filteredGrouped[safeCategory] || [];
-    const safeModule = safeModules.find((module) => module.name === activeModuleName)
-      ? activeModuleName
-      : safeModules[0]?.name || "";
-
-    if (safeCategory !== activeCategory) {
-      setActiveCategory(safeCategory);
-    }
-
-    if (safeModule !== activeModuleName) {
-      setActiveModuleName(safeModule);
-    }
-  }, [visibleCategories, filteredGrouped, activeCategory, activeModuleName]);
-
-  const visibleModules = activeCategory ? filteredGrouped[activeCategory] || [] : [];
+  const visibleModules = selectedCategory ? filteredGrouped[selectedCategory] || [] : [];
 
   const selectedModule = useMemo(() => {
-    return visibleModules.find((module) => module.name === activeModuleName) || null;
+    if (activeModuleName) {
+      const found = visibleModules.find((m) => m.name === activeModuleName);
+      if (found) return found;
+    }
+    return visibleModules[0] || null;
   }, [visibleModules, activeModuleName]);
 
   const totalModules = FILES.reduce((sum, file) => sum + file.modules.length, 0);
@@ -402,11 +677,8 @@ export default function PromptBlogLibraryFixed() {
                   Prompt Library Navigator
                 </h1>
                 <p className="mt-3 max-w-4xl text-sm leading-7 text-slate-600 md:text-base">
-                  以五份上傳檔案重整為三層導航架構：
-                  <strong>大分類</strong>＝檔案名稱、
-                  <strong>中分類</strong>＝類別、
-                  <strong>細分類</strong>＝提示詞模組名稱。
-                  左側用樹狀結構快速切換，右側顯示細分類完整內容。
+                  以五份上傳檔案重整為三層導航架構：<strong>大分類</strong>＝檔案名稱、<strong>中分類</strong>＝類別、<strong>細分類</strong>＝提示詞模組名稱。
+                  左側用樹狀結構快速切換，右側顯示細分類完整內容，方便當作部落格型知識庫或後續部署成網站。
                 </p>
               </div>
             </div>
@@ -425,7 +697,7 @@ export default function PromptBlogLibraryFixed() {
               </div>
               <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                 <p className="text-xs text-slate-500">目前中分類</p>
-                <p className="mt-2 text-sm font-semibold leading-6">{activeCategory || "—"}</p>
+                <p className="mt-2 text-sm font-semibold leading-6">{selectedCategory || "—"}</p>
               </div>
             </div>
           </div>
@@ -433,6 +705,7 @@ export default function PromptBlogLibraryFixed() {
 
         <section className="mb-6 flex flex-wrap gap-3">
           {FILES.map((file) => {
+            const count = file.modules.length;
             const active = activeFileId === file.id;
             return (
               <button
@@ -451,7 +724,7 @@ export default function PromptBlogLibraryFixed() {
               >
                 <div className="text-sm font-semibold">{file.label}</div>
                 <div className={cn("mt-1 text-xs", active ? "text-slate-300" : "text-slate-500")}>
-                  {file.modules.length} 個細分類
+                  {count} 個細分類
                 </div>
               </button>
             );
@@ -471,7 +744,7 @@ export default function PromptBlogLibraryFixed() {
             </div>
             <div className="flex items-center gap-3 text-sm text-slate-600">
               <button
-                onClick={() => setSidebarOpen((value) => !value)}
+                onClick={() => setSidebarOpen((v) => !v)}
                 className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 hover:bg-slate-50"
               >
                 <PanelLeftOpen className="h-4 w-4" />
@@ -494,9 +767,8 @@ export default function PromptBlogLibraryFixed() {
               </div>
               <div className="space-y-3">
                 {visibleCategories.map((category) => {
-                  const open = category === activeCategory;
+                  const open = selectedCategory === category;
                   const modules = filteredGrouped[category] || [];
-
                   return (
                     <div key={category} className="rounded-2xl border border-slate-200 bg-slate-50/80">
                       <button
@@ -516,7 +788,6 @@ export default function PromptBlogLibraryFixed() {
                           <ChevronRight className="h-4 w-4 text-slate-500" />
                         )}
                       </button>
-
                       {open ? (
                         <div className="space-y-1 border-t border-slate-200 px-2 py-2">
                           {modules.map((module) => {
@@ -535,12 +806,7 @@ export default function PromptBlogLibraryFixed() {
                               >
                                 <div className="font-medium">{module.name}</div>
                                 {module.description ? (
-                                  <div
-                                    className={cn(
-                                      "mt-1 line-clamp-2 text-xs",
-                                      selected ? "text-slate-300" : "text-slate-500"
-                                    )}
-                                  >
+                                  <div className={cn("mt-1 line-clamp-2 text-xs", selected ? "text-slate-300" : "text-slate-500")}>
                                     {module.description}
                                   </div>
                                 ) : null}
@@ -566,7 +832,7 @@ export default function PromptBlogLibraryFixed() {
                         大分類：{activeFile.label}
                       </span>
                       <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1">
-                        中分類：{activeCategory}
+                        中分類：{selectedCategory}
                       </span>
                       <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1">
                         細分類：{selectedModule.name}
@@ -597,7 +863,6 @@ export default function PromptBlogLibraryFixed() {
                       {selectedModule.prompt.length > 520 ? "…" : ""}
                     </p>
                   </section>
-
                   <section className="rounded-2xl border border-slate-200 bg-slate-950 p-4 text-slate-100">
                     <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                       完整提示詞
