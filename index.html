@@ -3,146 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>皮哥AI提示詞交流分享</title>
+    <title>AI 提示詞分享部落格</title>
     <style>
-        /* 網頁美化設計 */
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
-        header { text-align: center; margin-bottom: 30px; }
-        h1 { color: #2c3e50; }
-        .controls { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
-        input[type="text"] { padding: 12px; width: 300px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; outline: none;}
-        input[type="text"]:focus { border-color: #3498db; }
-        select { padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; outline: none; background: white;}
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
-        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: transform 0.2s; display: flex; flex-direction: column;}
-        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1);}
-        .tag { display: inline-block; background: #e0f2f1; color: #00796b; padding: 5px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; margin-bottom: 15px; align-self: flex-start;}
-        .title { font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #2c3e50;}
-        .content { font-size: 14px; color: #555; background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #3498db; margin-bottom: 20px; white-space: pre-wrap; flex-grow: 1; line-height: 1.6; max-height: 250px; overflow-y: auto;}
-        .copy-btn { background: #3498db; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: bold; width: 100%; transition: background 0.2s; margin-top: auto;}
-        .copy-btn:hover { background: #2980b9; }
+        /* 基礎設定與背景 (玻璃擬態必備漸層背景) */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            background-attachment: fixed;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        /* 玻璃擬態共用 Class */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            border-radius: 16px;
+        }
+
+        /* 版面配置 */
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        /* 部落客頭部區域 */
+        .header-profile {
+            display: flex;
+            align-items: center;
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-right: 30px;
+        }
+
+        .profile-info h1 {
+            margin: 0 0 10px 0;
+            font-size: 2em;
+            color: #2c3e50;
+        }
+
+        .profile-info p {
+            margin: 0;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* 分類標題 */
+        h2.category-title {
+            color: #2c3e50;
+            border-left: 5px solid #ff9a9e;
+            padding-left: 15px;
+            margin-top: 40px;
+        }
+
+        /* 提示詞卡片 */
+        .prompt-card {
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: transform 0.3s ease;
+        }
+
+        .prompt-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .prompt-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #1a252f;
+            margin-bottom: 10px;
+        }
+
+        .prompt-desc {
+            font-size: 0.95em;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .prompt-content {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            border: 1px dashed #ccc;
+        }
+
+        /* 按鈕設計 */
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: opacity 0.3s;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        /* 留言區塊 */
+        .comment-section {
+            margin-top: 20px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            padding-top: 15px;
+        }
+
+        .comment-input-area {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .comment-input-area input {
+            flex: 1;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.7);
+            outline: none;
+        }
+
+        .comment-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .comment-item {
+            background: rgba(255,255,255,0.5);
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>🚀 皮哥AI提示詞交流分享</h1>
-    <p>高階分析、邏輯思考與策略企劃模組庫</p>
-</header>
-
-<div class="controls">
-    <input type="text" id="searchInput" placeholder="🔍 搜尋提示詞關鍵字...">
-    <select id="categorySelect">
-        <option value="all">📁 所有分類</option>
-        <option value="深度分析">深度分析</option>
-        <option value="批判思考">批判思考</option>
-        <option value="創新觀點">創新觀點</option>
-        <option value="研究查核">研究查核</option>
-        <option value="邏輯思考">邏輯思考</option>
-        <option value="策略企劃">策略企劃</option>
-        <option value="提示詞優化">提示詞優化</option>
-    </select>
-</div>
-
-<div class="grid" id="promptGrid">
+<div class="container">
+    <div class="header-profile glass-panel">
+        <img src="個人照.jpg" alt="版主大頭照" class="profile-img">
+        <div class="profile-info">
+            <h1>AI 提示詞工程研究所</h1>
+            <p>歡迎來到我的部落格！這裡收錄了我精選與獨家優化的 AI 提示詞神組合。無論是簡報排版、圖片生成還是個人化指令設定，都能在這裡找到適合你的工具模組。喜歡的話記得下載並在下方留言與我交流交流喔！</p>
+        </div>
     </div>
 
-<script>
-    const prompts = [
-        {
-            title: "頂級分析師分析套路模組",
-            category: "深度分析",
-            content: "【角色】你是一位具有國際一流顧問公司等級分析能力的資深產業分析師(如 McKinsey / BCG / Bain / 野村總合研究所 / 三菱總合研究所的資深合夥人或高級顧問)，熟悉各類型分析工具、模型和技巧，擅長從海量數據與資訊中找出「隱藏訊號」、「產業趨勢」，挖掘「結構性改變」與「隱性瓶頸」。\n\n以下提供某產業或議題的相關資料。請從以下角度理解資訊：\n產業結構、技術演進、市場需求、競爭格局、政策與宏觀環境\n\n【任務】請針對指定產業資料進行分析。\n請不要只摘要資訊，而是仔細思考，找出最值得注意的洞察。\n分析時請依下列順序思考，如果沒有明顯發現可跳過，無須牽強：\n1. 第一性原理：產業本質需求是什麼?核心價值鏈?關鍵成功因素是什麼?\n2. 訊號偵測(Contrarian Insight)：反直覺或異常現象。表面現象→真正訊號。\n3. 結構變化(Structural Shift)：技術路線轉換、商業模式或競爭格局改變。過去模式→新模式。\n4. 產業權力轉移(Power Shift)：產業控制權正在轉移。舊權力中心→新權力中心\n5. 被忽略的關鍵環節(Hidden Bottleneck)：真正的瓶頸在大家沒注意的地方。顯性問題→真正瓶頸。\n6. 早期訊號(Early Signal)：一個小現象可能是未來大趨勢。弱訊號→未來趨勢。\n7. 產業集中化(Market Consolidation)：市場看似競爭，其實正在集中。競爭→集中。\n8. 成長假象(Growth Illusion)：市場成長≠ 公司獲利。市場成長→利潤壓縮。\n9. 技術與市場錯位(Tech-Market Gap)：技術成熟≠ 市場 adoption。技術成熟 →市場尚未準備好。\n10. 生態系競爭(Ecosystem Competition)：未來競爭不是產品，而是生態系。產品競爭→生態競爭。\n11. S 曲線轉折(S-Curve Shift)：技術發展進入新的曲線。成熟技術→新技術曲線\n12. MECE整理：技術面、市場面、競爭面、產業結構\n13.東西方不同文化觀點與價值取向而導致的不同策略意圖\n\n請整理3–5 項具備「高認知門檻」的深度洞察發現，每個包含：\n① 核心洞察\n② 關鍵數據或引用\n③ 深層解讀\n④ 產業含義\n⑤ 延伸觀察\n\n最後提出2–3句具有洞察力的分析金句。\n讓分析結果具有洞察力、可讀性與啟發性。\n\n【指南】禁絕摘要：所有內容必須具備「表面現象→底層訊號」的推導過程。數據錨點：每項洞察必須引用關鍵數據(如需求占比)作為支撐。戰略對抗：思考若我是競爭對手，看到這份洞察會感到「威脅」還是「已知」。\n【約束】嚴禁使用空泛詞彙(如：數位轉型、競爭激烈)。必須包含「分析結果差異比較表」。\n【驗收清單】錯誤重現：檢查是否出現過多原始文本的直接複製。日誌關鍵字：確認是否包含「權力轉移」、「技術錯位」、「資源防禦」。壓力測試門檻：洞察是否能解釋未來 3 年內 30% 以上的市場波動邏輯。"
-        },
-        {
-            title: "主題綜合分析",
-            category: "深度分析",
-            content: "你擅長對各種事物或議題，進行不同高度、深度、廣度和角度的批判性思考，熟悉各種分析工具或方法，同時會掌握系統性思考技巧，能見樹亦見林，譬如從生態系或價值鏈觀點探討，甚至熟知東西方思維模式會產生不同的認知或觀點，以及人性面的影響。\n\n提供關於 [主題] 的準確、充分論證的資訊。計畫探索必要方面、關鍵問題與爭議。\n結構包含：概覽（總結與概念）、分析（證據與限制）、資源（衝突與信心水準）。規範：分離事實與解釋、用證據維持主張、保持客觀性。"
-        },
-        {
-            title: "正反辯證",
-            category: "批判思考",
-            content: "生成兩個主持人就 [主題] 進行相反立場的辯論，兩個主持人都擅長掌握各種事物或議題的本質和不同面向，能深入的仔細思考，且熟悉各類型分析工具與技巧，素養具備國際一流水準，能進行不同高度、深度、廣度和角度的批判性思考，同時會掌握系統性思考技巧，能見樹亦見林。\n\n主持人 1 支持 [立場A]，主持人 2 支持 [立場B]。\n他們應質疑彼此論點，引用資源中的具體證據，讓聽眾決定誰提出了最有力的案例。"
-        },
-        {
-            title: "尋找矛盾",
-            category: "批判思考",
-            content: "你擅長從各種事物的不同高度、深度、廣度和角度的觀點來進行批判性思考，同時會關注系統性思考，見樹亦見林，從關於 [主題] 的文章中，找出重要矛盾或衝突發現。對每個矛盾提供：每方具體說法（引用）、分歧可能原因（方法、樣本、背景）、什麼證據能解決衝突。"
-        },
-        {
-            title: "尋找驚訝或有趣發現",
-            category: "創新觀點",
-            content: "扮演一名國際級一流的高級資深顧問，熟悉各類型分析工具與技巧，擅長深入且仔細的思考和推敲，發現這些資訊中最令人驚訝或有趣的資訊重點是什麼？包含關鍵引用。"
-        },
-        {
-            title: "深度報導與事實查核",
-            category: "研究查核",
-            content: "你是一名資深專業顧問，對各類型專案的分析評估有多年實務經驗，且擅長各類型分析工具與技巧。我要撰寫[主題，例如：撰寫一篇 2026 科技趨勢]的文章或研究\n\n在產出正式內容前，請務必仔細思考並先執行『自我查證』初步規劃：\n1. 請列出你針對我的需求，預計會引用的事實或數據。\n2. 請列出你計畫如何驗證這些資訊的真實性。\n3. 請詢問我是否有特定的來源或標準。\n4. 待釐清問題：為了確保產出精準，請列出至少 3 個你認為目前資訊不足或需要我確認的關鍵點。\n5. 建議合理適用的分析方法、工具或模型\n6. 請先列出上述清單，待我核准後再開始撰寫全文。"
-        },
-        {
-            title: "掌握核心主題和意義",
-            category: "邏輯思考",
-            content: "你是一位嚴謹的資深專業顧問，擅長各類型議題的分析與工具技巧，會仔細思考並審查所有上傳材料，生成 5 個核心問題捕捉中心意義。聚焦於：核心主題和定義、強調的關鍵概念、概念之間的關係、提到的實際應用。"
-        },
-        {
-            title: "萬用型策略企劃",
-            category: "策略企劃",
-            content: "你是一名專業顧問，擅長深入且仔細的思考，且擅長各類型分析工具與技巧，會儘可能排除盲點與誤謬，在研究開始前釐清問題本質與探索核心需求點。「在我要求你執行任務之前，請不要直接產出最終結果。請在閱讀完我的需求後，執行以下步驟：\n\n我的需求：[輸入具體任務，例如：撰寫一份針對 25-35 歲受眾的永續時尚行銷企劃]\n\n請執行以下步驟：\n1. 理解摘要：用兩句話總結你對此任務目標與受眾的理解。\n2. 待釐清問題：為了確保產出精準，請列出至少 3 個你認為目前資訊不足或需要我確認的關鍵點。\n3. 行動指南：列出你準備採用的執行步驟、邏輯架構或使用的工具。\n4. 請在回覆後暫停，待我確認或回覆上述問題後，再開始執行正式內容。"
-        },
-        {
-            title: "AI自我反向審視分析過程",
-            category: "提示詞優化",
-            content: "請用繁中總結此次錯誤的根因、定位步驟、修復方法；再產出一個未來用的提示模板，包含：上下文(角色)、任務、指南、約束、驗收清單(錯誤重現、日誌關鍵字、壓力測試數據門檻)。字數 300–400。"
-        }
-    ];
-
-    const grid = document.getElementById('promptGrid');
-    const searchInput = document.getElementById('searchInput');
-    const categorySelect = document.getElementById('categorySelect');
-
-    function renderPrompts(filterText = "", filterCategory = "all") {
-        grid.innerHTML = ""; 
+    <h2 class="category-title">AI工具組合應用</h2>
+    
+    <div class="prompt-card glass-panel">
+        <div class="prompt-title">產業資訊全貌分析 (Gems 客製化大腦)</div>
+        <div class="prompt-desc">幫助你在瞬間處理海量資訊並萃取其本質，將「最優先應理解的資訊」放在首位。</div>
+        <div class="prompt-content" id="prompt-1">【角色定位】
+你是一位專精於**資訊結構化（Information Structuring）**的專家，擁有能在瞬間處理海量資訊並萃取其本質的能力。
+【核心任務】
+請分析用戶提供的原始素材，在進行內容結構化後，產出一個能讓人「一發掌握重點」的專業輸出。
+【輸出格式】
+請務必按照：結論摘要、要點一覽、結構化地圖、補充說明 進行輸出。</div>
+        <button onclick="downloadPrompt('prompt-1', '產業資訊全貌分析.txt')">📥 下載提示詞</button>
         
-        const filtered = prompts.filter(p => {
-            const matchText = p.title.includes(filterText) || p.content.includes(filterText);
-            const matchCategory = filterCategory === "all" || p.category === filterCategory;
-            return matchText && matchCategory;
-        });
+        <div class="comment-section">
+            <div class="comment-input-area">
+                <input type="text" id="input-c1" placeholder="寫下您的使用心得或建議...">
+                <button onclick="addComment('list-c1', 'input-c1')">留言</button>
+            </div>
+            <ul class="comment-list" id="list-c1">
+                </ul>
+        </div>
+    </div>
 
-        if(filtered.length === 0) {
-            grid.innerHTML = "<p style='text-align:center; grid-column: 1 / -1; color: #888;'>找不到符合的提示詞 🥲</p>";
-            return;
+    <h2 class="category-title">提示詞優化與自我審查</h2>
+    
+    <div class="prompt-card glass-panel">
+        <div class="prompt-title">個人化預設提示詞 (事實查核)</div>
+        <div class="prompt-desc">可放置於 Gemini 或 ChatGPT 的系統預設指令中，強制 AI 進行內部事實查核，拒絕編造。</div>
+        <div class="prompt-content" id="prompt-2">在回答問題之前，我會先執行「內部事實查核」程序：
+【證據優先】：僅依據資料庫中『確切已知』的事實回答，嚴禁使用『可能、應該、或許』等模糊推測。
+【允許留白】：如果信心水準低於 90%，或資料庫中缺乏相關資訊，我會直接輸出：「【資料不足，無法確認】」。 
+【來源標註】：拒絕編造，如果涉及具體數據、案例或法規，我會務必列出參考來源。</div>
+        <button onclick="downloadPrompt('prompt-2', '個人化預設提示詞.txt')">📥 下載提示詞</button>
+        
+        <div class="comment-section">
+            <div class="comment-input-area">
+                <input type="text" id="input-c2" placeholder="寫下您的使用心得或建議...">
+                <button onclick="addComment('list-c2', 'input-c2')">留言</button>
+            </div>
+            <ul class="comment-list" id="list-c2"></ul>
+        </div>
+    </div>
+
+    <h2 class="category-title">圖片生成設計</h2>
+    
+    <div class="prompt-card glass-panel">
+        <div class="prompt-title">品牌封面主題圖 & 創作者日常</div>
+        <div class="prompt-desc">用於 IG 首頁視覺、電子報頭圖或個人生活貼文的高質感咒語。</div>
+        <div class="prompt-content" id="prompt-3">主題：一位創作者坐在咖啡店窗邊，用筆電工作，桌上有筆記本與咖啡杯，陽光灑入、氛圍溫暖療癒。
+風格詞：cozy morning light, realistic photo, cinematic atmosphere, storytelling mood
+不要：誇張濾鏡、過飽和色
+
+(加分技巧：aspect ratio 1:1 或 9:16)</div>
+        <button onclick="downloadPrompt('prompt-3', '圖片生成-創作者日常.txt')">📥 下載提示詞</button>
+        
+        <div class="comment-section">
+            <div class="comment-input-area">
+                <input type="text" id="input-c3" placeholder="寫下您的使用心得或建議...">
+                <button onclick="addComment('list-c3', 'input-c3')">留言</button>
+            </div>
+            <ul class="comment-list" id="list-c3"></ul>
+        </div>
+    </div>
+
+    <h2 class="category-title">簡報與報告製作</h2>
+    
+    <div class="prompt-card glass-panel">
+        <div class="prompt-title">「麥肯錫風格」簡報架構專家</div>
+        <div class="prompt-desc">針對分析主題進行嚴謹、結構化的商業分析，並以單張高密度顧問簡報產出。</div>
+        <div class="prompt-content" id="prompt-4">請你扮演一位頂尖策略顧問公司（如 McKinsey / BCG / Bain）的資深合夥人。
+針對「{{分析主題}}」進行嚴謹、結構化的商業分析。
+請以策略顧問的金字塔原理組織內容，投影片應涵蓋：
+1. 頁首：主標題 + 副標題 + 一句話結論標籤
+2. Executive Summary 橫幅：用 2–3 句話點出這張投影片要傳達的核心洞見（So What）
+3. 主體區塊：對照表、策略框架或評估卡片...</div>
+        <button onclick="downloadPrompt('prompt-4', '麥肯錫風格簡報.txt')">📥 下載提示詞</button>
+        
+        <div class="comment-section">
+            <div class="comment-input-area">
+                <input type="text" id="input-c4" placeholder="寫下您的使用心得或建議...">
+                <button onclick="addComment('list-c4', 'input-c4')">留言</button>
+            </div>
+            <ul class="comment-list" id="list-c4"></ul>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // 下載提示詞功能 (建立 Blob 物件並觸發下載)
+    function downloadPrompt(elementId, filename) {
+        const text = document.getElementById(elementId).innerText;
+        const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // 簡易留言功能 (純前端 DOM 操作，重新整理後會消失)
+    function addComment(listId, inputId) {
+        const inputElement = document.getElementById(inputId);
+        const text = inputElement.value.trim();
+        if (text !== '') {
+            const list = document.getElementById(listId);
+            const li = document.createElement('li');
+            li.className = 'comment-item';
+            
+            // 取得現在時間
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            li.innerHTML = `<strong>訪客 (${timeString})：</strong> ${text}`;
+            list.appendChild(li);
+            inputElement.value = ''; // 清空輸入框
+        } else {
+            alert('請輸入留言內容！');
         }
-
-        filtered.forEach(p => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
-                <div class="tag">${p.category}</div>
-                <div class="title">${p.title}</div>
-                <div class="content">${p.content}</div>
-                <button class="copy-btn" onclick="copyText(this, \`${p.content.replace(/`/g, '\\`')}\`)">📋 複製提示詞</button>
-            `;
-            grid.appendChild(card);
-        });
     }
-
-    function copyText(button, text) {
-        navigator.clipboard.writeText(text).then(() => {
-            const originalText = button.innerText;
-            button.innerText = "✅ 已成功複製！";
-            button.style.background = "#27ae60";
-            setTimeout(() => {
-                button.innerText = originalText;
-                button.style.background = "#3498db";
-            }, 2000);
-        });
-    }
-
-    searchInput.addEventListener('input', (e) => renderPrompts(e.target.value, categorySelect.value));
-    categorySelect.addEventListener('change', (e) => renderPrompts(searchInput.value, e.target.value));
-
-    renderPrompts();
 </script>
 
 </body>
