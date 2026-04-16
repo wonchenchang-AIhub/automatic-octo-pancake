@@ -3,297 +3,290 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 提示詞分享部落格</title>
+    <title>AI 提示詞模組知識庫</title>
     <style>
-        /* 基礎設定與背景 (玻璃擬態必備漸層背景) */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+        }
+
         body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            background-attachment: fixed;
-            color: #333;
-            min-height: 100vh;
-        }
-
-        /* 玻璃擬態共用 Class */
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-            border-radius: 16px;
-        }
-
-        /* 版面配置 */
-        .container {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 20px;
-        }
-
-        /* 部落客頭部區域 */
-        .header-profile {
-            display: flex;
-            align-items: center;
-            padding: 30px;
-            margin-bottom: 40px;
-        }
-
-        .profile-img {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin-right: 30px;
-        }
-
-        .profile-info h1 {
-            margin: 0 0 10px 0;
-            font-size: 2em;
-            color: #2c3e50;
-        }
-
-        .profile-info p {
-            margin: 0;
-            color: #555;
             line-height: 1.6;
         }
 
-        /* 分類標題 */
-        h2.category-title {
-            color: #2c3e50;
-            border-left: 5px solid #ff9a9e;
-            padding-left: 15px;
-            margin-top: 40px;
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        /* 提示詞卡片 */
-        .prompt-card {
-            padding: 25px;
-            margin-bottom: 25px;
-            transition: transform 0.3s ease;
+        header h1 {
+            margin: 0 0 1rem 0;
+            font-weight: 300;
+            letter-spacing: 2px;
         }
 
-        .prompt-card:hover {
-            transform: translateY(-5px);
+        /* 大分類導覽列設計 */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 0 20px;
         }
 
-        .prompt-title {
-            font-size: 1.4em;
+        .tab-btn {
+            background-color: transparent;
+            border: 2px solid white;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background-color: white;
+            color: var(--primary-color);
             font-weight: bold;
-            color: #1a252f;
-            margin-bottom: 10px;
         }
 
-        .prompt-desc {
-            font-size: 0.95em;
+        /* 內容區塊 */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        /* 提示詞卡片設計 */
+        .card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 10px;
+        }
+
+        .card .desc {
+            font-size: 0.9rem;
             color: #666;
             margin-bottom: 15px;
+            flex-grow: 1;
         }
 
-        .prompt-content {
-            background: rgba(255, 255, 255, 0.6);
-            padding: 15px;
-            border-radius: 8px;
-            font-family: monospace;
+        .prompt-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--accent-color);
+            padding: 10px;
+            font-size: 0.85rem;
+            color: #444;
+            max-height: 150px;
+            overflow-y: auto;
+            margin-bottom: 15px;
             white-space: pre-wrap;
-            margin-bottom: 20px;
-            font-size: 0.9em;
-            border: 1px dashed #ccc;
         }
 
-        /* 按鈕設計 */
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .copy-btn {
+            background-color: var(--accent-color);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
+            padding: 10px;
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 0.9em;
             font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: background 0.3s;
+            text-align: center;
+        }
+
+        .copy-btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* 提示訊息 */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #27ae60;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            opacity: 0;
             transition: opacity 0.3s;
-        }
-
-        button:hover {
-            opacity: 0.8;
-        }
-
-        /* 留言區塊 */
-        .comment-section {
-            margin-top: 20px;
-            border-top: 1px solid rgba(0,0,0,0.1);
-            padding-top: 15px;
-        }
-
-        .comment-input-area {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .comment-input-area input {
-            flex: 1;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 20px;
-            background: rgba(255,255,255,0.7);
-            outline: none;
-        }
-
-        .comment-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .comment-item {
-            background: rgba(255,255,255,0.5);
-            padding: 10px 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            font-size: 0.9em;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header-profile glass-panel">
-        <img src="個人照.jpg" alt="版主大頭照" class="profile-img">
-        <div class="profile-info">
-            <h1>AI 提示詞工程研究所</h1>
-            <p>歡迎來到我的部落格！這裡收錄了我精選與獨家優化的 AI 提示詞神組合。無論是簡報排版、圖片生成還是個人化指令設定，都能在這裡找到適合你的工具模組。喜歡的話記得下載並在下方留言與我交流交流喔！</p>
-        </div>
-    </div>
-
-    <h2 class="category-title">AI工具組合應用</h2>
-    
-    <div class="prompt-card glass-panel">
-        <div class="prompt-title">產業資訊全貌分析 (Gems 客製化大腦)</div>
-        <div class="prompt-desc">幫助你在瞬間處理海量資訊並萃取其本質，將「最優先應理解的資訊」放在首位。</div>
-        <div class="prompt-content" id="prompt-1">【角色定位】
-你是一位專精於**資訊結構化（Information Structuring）**的專家，擁有能在瞬間處理海量資訊並萃取其本質的能力。
-【核心任務】
-請分析用戶提供的原始素材，在進行內容結構化後，產出一個能讓人「一發掌握重點」的專業輸出。
-【輸出格式】
-請務必按照：結論摘要、要點一覽、結構化地圖、補充說明 進行輸出。</div>
-        <button onclick="downloadPrompt('prompt-1', '產業資訊全貌分析.txt')">📥 下載提示詞</button>
-        
-        <div class="comment-section">
-            <div class="comment-input-area">
-                <input type="text" id="input-c1" placeholder="寫下您的使用心得或建議...">
-                <button onclick="addComment('list-c1', 'input-c1')">留言</button>
+    <header>
+        <h1>🤖 專業 AI 提示詞模組知識庫</h1>
+        <div class="tabs" id="tabs-container">
             </div>
-            <ul class="comment-list" id="list-c1">
-                </ul>
-        </div>
-    </div>
+    </header>
 
-    <h2 class="category-title">提示詞優化與自我審查</h2>
-    
-    <div class="prompt-card glass-panel">
-        <div class="prompt-title">個人化預設提示詞 (事實查核)</div>
-        <div class="prompt-desc">可放置於 Gemini 或 ChatGPT 的系統預設指令中，強制 AI 進行內部事實查核，拒絕編造。</div>
-        <div class="prompt-content" id="prompt-2">在回答問題之前，我會先執行「內部事實查核」程序：
-【證據優先】：僅依據資料庫中『確切已知』的事實回答，嚴禁使用『可能、應該、或許』等模糊推測。
-【允許留白】：如果信心水準低於 90%，或資料庫中缺乏相關資訊，我會直接輸出：「【資料不足，無法確認】」。 
-【來源標註】：拒絕編造，如果涉及具體數據、案例或法規，我會務必列出參考來源。</div>
-        <button onclick="downloadPrompt('prompt-2', '個人化預設提示詞.txt')">📥 下載提示詞</button>
-        
-        <div class="comment-section">
-            <div class="comment-input-area">
-                <input type="text" id="input-c2" placeholder="寫下您的使用心得或建議...">
-                <button onclick="addComment('list-c2', 'input-c2')">留言</button>
+    <div class="container">
+        <h2 id="category-title" style="color: var(--primary-color); border-left: 5px solid var(--accent-color); padding-left: 10px;">請選擇上方的分類</h2>
+        <div class="module-grid" id="module-container">
             </div>
-            <ul class="comment-list" id="list-c2"></ul>
-        </div>
     </div>
 
-    <h2 class="category-title">圖片生成設計</h2>
-    
-    <div class="prompt-card glass-panel">
-        <div class="prompt-title">品牌封面主題圖 & 創作者日常</div>
-        <div class="prompt-desc">用於 IG 首頁視覺、電子報頭圖或個人生活貼文的高質感咒語。</div>
-        <div class="prompt-content" id="prompt-3">主題：一位創作者坐在咖啡店窗邊，用筆電工作，桌上有筆記本與咖啡杯，陽光灑入、氛圍溫暖療癒。
-風格詞：cozy morning light, realistic photo, cinematic atmosphere, storytelling mood
-不要：誇張濾鏡、過飽和色
+    <div class="toast" id="toast">✅ 提示詞已複製到剪貼簿！</div>
 
-(加分技巧：aspect ratio 1:1 或 9:16)</div>
-        <button onclick="downloadPrompt('prompt-3', '圖片生成-創作者日常.txt')">📥 下載提示詞</button>
-        
-        <div class="comment-section">
-            <div class="comment-input-area">
-                <input type="text" id="input-c3" placeholder="寫下您的使用心得或建議...">
-                <button onclick="addComment('list-c3', 'input-c3')">留言</button>
-            </div>
-            <ul class="comment-list" id="list-c3"></ul>
-        </div>
-    </div>
+    <script>
+        // 將四個檔案中的精華提示詞整理為結構化資料
+        const database = {
+            "AI工具神組合": [
+                {
+                    title: "產業資訊全貌分析",
+                    desc: "Gems 客製化大腦 + NotebookLM。要求 AI 扮演資訊結構化專家，從宏觀到微觀萃取海量資訊的本質。",
+                    prompt: "【角色定位】\n你是一位專精於**資訊結構化（Information Structuring）**的專家...\n【核心任務】\n請分析用戶提供的原始素材，產出一個能讓人「一發掌握重點」的專業輸出...\n【輸出格式】\n請務必包含：【結論摘要】、【要點一覽】、【結構化地圖】。"
+                },
+                {
+                    title: "Gemini Deep Research 變現分析",
+                    desc: "尋找真實可靠的線上變現機會，要求強制溯源與真實數據的查核模式。",
+                    prompt: "# Role: 嚴謹的數位商業分析師與事實查核員\n## Core Task\n分析 10 種主流線上變現模式，並提供 3-5 個普通人使用 AI 工具變現的真實案例。\n## Critical Constraints\n1. 拒絕編造。2. 強制溯源。3. 網址打包。"
+                }
+            ],
+            "研究/評估/企劃套路": [
+                {
+                    title: "頂級分析師分析套路",
+                    desc: "扮演頂尖策略顧問（如 McKinsey / BCG），進行 13 種套路解析並找出隱藏訊號。",
+                    prompt: "【角色】你是一位具有國際一流顧問公司等級分析能力的資深產業分析師...\n【任務】請針對指定產業資料進行分析。請不要只摘要資訊，而是找出最值得注意的洞察。\n思考順序：1.第一性原理 2.訊號偵測 3.結構變化 4.產業權力轉移..."
+                },
+                {
+                    title: "呼喚假伯斯 (深度靈魂拷問)",
+                    desc: "極致簡約且帶有毒舌屬性，用現實扭曲力場幫你解決職場問題。",
+                    prompt: "你現在是 Steve Jobs。你的核心性格：極致簡約，厭惡複雜與冗長。直率且毒舌，對平庸的提案沒有耐心... 你的任務目標是：利用你的專業能力，幫我解決我遇到的職場問題。"
+                },
+                {
+                    title: "萬用校稿總編輯",
+                    desc: "擁有二十年經驗的繁體中文總編輯，對文本進行基礎糾錯、句構優化與詞彙精煉。",
+                    prompt: "你是一位擁有超過二十年經驗的資深繁體中文總編輯... 核心任務：接收使用者提供的繁體中文文本，進行：1. 基礎錯誤校正 2. 句構優化 3. 詞彙精煉。並以表格方式呈現修改前後對照。"
+                },
+                {
+                    title: "McKinsey顧問型一頁式總結",
+                    desc: "提萃資訊濃縮在一頁供決策的高密度顧問簡報投影片輸出框架。",
+                    prompt: "請你扮演一位頂尖策略顧問公司的資深合夥人。針對分析主題進行商業分析，並以單張高密度顧問簡報投影片（HTML 格式）輸出。包含：Executive Summary、對照表、策略框架等。"
+                }
+            ],
+            "個人化預設提示詞": [
+                {
+                    title: "提示詞優化與結構轉化",
+                    desc: "將口語化提示詞轉化為高階的 [角色/背景/指令/約束] 結構。",
+                    prompt: "第一步：專家優化。當我輸入「原始提示詞」時，先將其轉化為更精確的「結構化提示詞」。轉化時必須包含：[角色任務]、[背景資訊]、[具體指令]、[約束條件]。\n第二步：內部評分，制定標準直到答案達 10/10 完美版本才輸出。"
+                },
+                {
+                    title: "嚴格內部事實查核",
+                    desc: "防堵幻覺，強制 AI 進行證據優先與數據比對的自我審查機制。",
+                    prompt: "在回答問題之前，我會先執行「內部事實查核」程序：\n【證據優先】：僅依據確切已知的事實回答。\n【允許留白】：信心水準低於 90% 時輸出資料不足。\n【來源標註】：拒絕編造，列出文獻庫。\n【數據比對】：確保報告中英數字一致。"
+                }
+            ],
+            "圖片與簡報生成模組": [
+                {
+                    title: "品牌封面/IG首頁視覺",
+                    desc: "極簡封面設計，適合社群媒體發文或電子報頭圖使用。",
+                    prompt: "主題：以（品牌主題）為靈感的極簡封面設計，背景為柔和漸層色。\n風格詞：minimalist design, pastel gradient background, clean composition, editorial cover style\n不要：文字、人物、複雜紋理"
+                },
+                {
+                    title: "簡報設計專家框架",
+                    desc: "快速建立一份符合邏輯且視覺清爽的美觀 PPT 架構。",
+                    prompt: "請扮演一位頂尖簡報設計專家。為 [主題] 設計一份完整簡報架構：\n1. 分析目標受眾\n2. 提供 10-15 張投影片詳細大綱\n3. 包含開場鉤子、故事架構、關鍵數據呈現與結尾行動呼籲。"
+                },
+                {
+                    title: "創作者日常情境圖",
+                    desc: "用於個人故事、生活日常貼文，營造溫暖療癒氛圍。",
+                    prompt: "主題：一位創作者坐在咖啡店窗邊，用筆電工作，桌上有筆記本與咖啡杯，陽光灑入。\n風格詞：cozy morning light, realistic photo, cinematic atmosphere, storytelling mood\n不要：誇張濾鏡、過飽和色"
+                }
+            ]
+        };
 
-    <h2 class="category-title">簡報與報告製作</h2>
-    
-    <div class="prompt-card glass-panel">
-        <div class="prompt-title">「麥肯錫風格」簡報架構專家</div>
-        <div class="prompt-desc">針對分析主題進行嚴謹、結構化的商業分析，並以單張高密度顧問簡報產出。</div>
-        <div class="prompt-content" id="prompt-4">請你扮演一位頂尖策略顧問公司（如 McKinsey / BCG / Bain）的資深合夥人。
-針對「{{分析主題}}」進行嚴謹、結構化的商業分析。
-請以策略顧問的金字塔原理組織內容，投影片應涵蓋：
-1. 頁首：主標題 + 副標題 + 一句話結論標籤
-2. Executive Summary 橫幅：用 2–3 句話點出這張投影片要傳達的核心洞見（So What）
-3. 主體區塊：對照表、策略框架或評估卡片...</div>
-        <button onclick="downloadPrompt('prompt-4', '麥肯錫風格簡報.txt')">📥 下載提示詞</button>
-        
-        <div class="comment-section">
-            <div class="comment-input-area">
-                <input type="text" id="input-c4" placeholder="寫下您的使用心得或建議...">
-                <button onclick="addComment('list-c4', 'input-c4')">留言</button>
-            </div>
-            <ul class="comment-list" id="list-c4"></ul>
-        </div>
-    </div>
+        const tabsContainer = document.getElementById('tabs-container');
+        const moduleContainer = document.getElementById('module-container');
+        const categoryTitle = document.getElementById('category-title');
+        const toast = document.getElementById('toast');
 
-</div>
-
-<script>
-    // 下載提示詞功能 (建立 Blob 物件並觸發下載)
-    function downloadPrompt(elementId, filename) {
-        const text = document.getElementById(elementId).innerText;
-        const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
-    // 簡易留言功能 (純前端 DOM 操作，重新整理後會消失)
-    function addComment(listId, inputId) {
-        const inputElement = document.getElementById(inputId);
-        const text = inputElement.value.trim();
-        if (text !== '') {
-            const list = document.getElementById(listId);
-            const li = document.createElement('li');
-            li.className = 'comment-item';
-            
-            // 取得現在時間
-            const now = new Date();
-            const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            
-            li.innerHTML = `<strong>訪客 (${timeString})：</strong> ${text}`;
-            list.appendChild(li);
-            inputElement.value = ''; // 清空輸入框
-        } else {
-            alert('請輸入留言內容！');
+        // 初始化導覽列
+        function initTabs() {
+            const categories = Object.keys(database);
+            categories.forEach((cat, index) => {
+                const btn = document.createElement('button');
+                btn.className = `tab-btn ${index === 0 ? 'active' : ''}`;
+                btn.textContent = cat;
+                btn.onclick = () => {
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderModules(cat);
+                };
+                tabsContainer.appendChild(btn);
+            });
+            // 預設載入第一個分類
+            renderModules(categories[0]);
         }
-    }
-</script>
 
+        // 渲染對應分類的卡片
+        function renderModules(category) {
+            categoryTitle.textContent = `📌 ${category}`;
+            moduleContainer.innerHTML = '';
+            
+            const modules = database[category];
+            modules.forEach(mod => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <h3>${mod.title}</h3>
+                    <div class="desc">${mod.desc}</div>
+                    <div class="prompt-box" id="prompt-${mod.title}">${mod.prompt}</div>
+                    <button class="copy-btn" onclick="copyToClipboard('${mod.prompt}')">📋 一鍵複製提示詞</button>
+                `;
+                moduleContainer.appendChild(card);
+            });
+        }
+
+        // 複製到剪貼簿功能
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                toast.style.opacity = 1;
+                setTimeout(() => {
+                    toast.style.opacity = 0;
+                }, 2000);
+            });
+        }
+
+        // 網頁載入時啟動
+        window.onload = initTabs;
+    </script>
 </body>
 </html>
